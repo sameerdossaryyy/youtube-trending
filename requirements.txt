@@ -1,16 +1,17 @@
 # Core Packages
-streamlit==1.32.0
-python-dotenv==1.0.0
-google-api-python-client==2.108.0
+streamlit>=1.32.0
+python-dotenv>=1.0.0
+google-api-python-client>=2.108.0
 
 # Sentiment Analysis
-nltk==3.8.1
-textblob==0.17.1
+nltk>=3.8.1
+textblob>=0.17.1
 
-# Support Packages
+# Support Packages (pinned for stability)
 pandas==2.1.4
 numpy==1.26.2
 requests==2.31.0
 
-# Development
-pytest==7.4.3
+# Add these critical dependencies
+protobuf==3.20.3  # Resolves Google API conflicts
+pyopenssl==23.2.0  # For HTTPS connections
