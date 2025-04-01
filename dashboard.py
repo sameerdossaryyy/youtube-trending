@@ -4,7 +4,7 @@ import plotly.express as px
 from googleapiclient.discovery import build
 from textblob import TextBlob
 
-# 1. First define all functions
+#define all functions
 def get_trending_videos(api_key, region_code="US", max_results=10):
     youtube = build("youtube", "v3", developerKey=api_key)
     
@@ -35,15 +35,15 @@ def analyze_sentiment(text):
         "subjectivity": analysis.sentiment.subjectivity
     }
 
-# 2. Then fetch data (after function definitions)
-API_KEY = "AIzaSyBPNU6Dr2AKfrYhz7KA-ekCBoANtpOrOxI"  # Replace with yours
+#fetch data
+API_KEY = "AIzaSyBPNU6Dr2AKfrYhz7KA-ekCBoANtpOrOxI"  
 videos = get_trending_videos(API_KEY)
 
-# Add sentiment analysis
+#sentiment analysis
 for video in videos:
     video.update(analyze_sentiment(video["title"]))
 
-# 3. Finally build the dashboard
+#dashboard
 st.title("📈 YouTube Trending Analyzer")
 df = pd.DataFrame(videos)
 
