@@ -56,7 +56,7 @@ def get_trending_videos(api_key, region_code="US", max_results=50):
                 'viewCount': item['statistics'].get('viewCount', 'N/A'),
                 'duration': parse_youtube_duration(item['contentDetails']['duration']),
                 'categoryId': item['snippet'].get('categoryId'),
-                'category': categories.get(int(item['snippet'].get('categoryId', 0)), 
+                'category': categories.get(int(item['snippet'].get('categoryId', 0))), 
                 'publishedAt': item['snippet']['publishedAt'],
                 'videoId': item['id'],
                 'thumbnail': item['snippet']['thumbnails']['medium']['url']
