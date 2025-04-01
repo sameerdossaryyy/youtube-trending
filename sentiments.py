@@ -2,12 +2,18 @@ from textblob import TextBlob
 
 def analyze_sentiment(text):
     analysis = TextBlob(text)
+    polarity = analysis.sentiment.polarity
+    
+    # Enhanced emotion classification
+    if polarity > 0.3:
+        emotion = "😊 Positive"
+    elif polarity < -0.3:
+        emotion = "😠 Negative"
+    else:
+        emotion = "😐 Neutral"
+    
     return {
-        "polarity": analysis.sentiment.polarity,  # -1 to 1 (negative to positive)
-        "subjectivity": analysis.sentiment.subjectivity  # 0 to 1 (fact to opinion)
+        "polarity": round(polarity, 2),
+        "subjectivity": round(analysis.sentiment.subjectivity, 2),
+        "emotion": emotion
     }
-
-# Apply to video titles
-for video in videos:
-    sentiment = analyze_sentiment(video["title"])
-    video.update(sentiment)
