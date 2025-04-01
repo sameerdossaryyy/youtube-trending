@@ -9,13 +9,7 @@ load_dotenv()
 API_KEY = os.getenv('YOUTUBE_API_KEY')
 
 def parse_youtube_duration(duration):
-    """
-    Convert YouTube duration (ISO 8601) to seconds.
-    Examples:
-    - "PT24M" → 1440 (24 minutes)
-    - "PT2H30M" → 9000 (2.5 hours)
-    - "PT1M30S" → 90 (1.5 minutes)
-    """
+    """Convert ISO 8601 duration to seconds"""
     match = re.match(r'PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?', duration)
     if not match:
         return 0
@@ -31,32 +25,43 @@ def parse_youtube_duration(duration):
     ).total_seconds()
 
 def get_trending_videos(api_key, region_code="US", max_results=50):
-    """
-    Fetch trending videos from YouTube API
-    Returns list of videos with parsed durations
-    """
+    """Fetch trending videos with category data"""
     youtube = build('youtube', 'v3', developerKey=api_key)
     
     try:
-        request = youtube.videos().list(
+        # Get videos
+        video_request = youtube.videos().list(
             part="snippet,contentDetails,statistics",
             chart="mostPopular",
             regionCode=region_code,
             maxResults=max_results
         )
-        response = request.execute()
+        video_response = video_request.execute()
         
+        # Get category names
+        category_request = youtube.videoCategories().list(
+            part="snippet",
+            regionCode=region_code
+        )
+        category_response = category_request.execute()
+        categories = {int(item['id']): item['snippet']['title'] 
+                     for item in category_response.get('items', [])}
+        
+        # Process videos
         videos = []
-        for item in response.get('items', []):
-            video = {
+        for item in video_response.get('items', []):
+            video_data = {
                 'title': item['snippet']['title'],
                 'channelTitle': item['snippet']['channelTitle'],
-                'viewCount': item['statistics'].get('viewCount', '0'),
+                'viewCount': item['statistics'].get('viewCount', 'N/A'),
                 'duration': parse_youtube_duration(item['contentDetails']['duration']),
+                'categoryId': item['snippet'].get('categoryId'),
+                'category': categories.get(int(item['snippet'].get('categoryId', 0)), 
                 'publishedAt': item['snippet']['publishedAt'],
-                'videoId': item['id']
+                'videoId': item['id'],
+                'thumbnail': item['snippet']['thumbnails']['medium']['url']
             }
-            videos.append(video)
+            videos.append(video_data)
         
         return videos
     
